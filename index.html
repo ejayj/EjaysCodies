@@ -1,0 +1,225 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+  <link rel="stylesheet" href="styles.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+  <!-- <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script> -->
+
+  
+  <title>Ejay's Codies</title>
+</head>
+<script>
+//  var socket = io()
+//  socket.on('connect', function () {
+//    console.log('Connected to Server')
+//});
+</script>
+
+<body> <!-- start game as soon as you load the page; this should be turned off for online multiplayer play. How to start it as a one-time instance server?-->
+
+  <div class="main">
+    <!-- scoreboard -->
+
+    <div style="text-align: center; color: rgb(217,87,69); font-size: 2em;" id="GameHeader"><h1>Welcome!</h1></div>
+    <div style="text-align: center; display: none; color: rgb(217,87,69); font-size: 25px;" id="Timer">60</div>
+    <div class="" style="overflow:auto; font-size: 25px;">
+      <div id="score" style="float: left;">
+        <span id="redscore" style="color: rgb(217,87,69);">9</span>
+          <span style="color: white;"><span>-</span>
+        <span id="bluescore" style="color: rgb(61,122,210);">8</span>
+      </div>
+      <!-- this is a filler value, will be updated by javascript as game progresses-->
+      <div style="float: right;" class="button-outline "> <button class="button" onclick="endTurn()">End Turn</button></div>
+    </div>
+
+
+    <div style="vertical-align: middle;">
+
+
+      <!-- <div class="Row" style="display: inline-block;"> 
+        <div class="Column" >
+          9-8
+        </div>
+
+        <div class="Column" style="align-items: center;">
+          [Your Turn] [timer]
+        </div>
+
+        <div class="Column" style="justify-content: right; text-align: right; align-items: right;">
+          [End Turn]
+        </div>
+      </div> -->
+
+      <!-- game board-->
+      <table>
+        <!-- row 1-->
+        <tr>
+          <td>
+            <button class="card" id="1" onClick="changeScoreCard(this.id)">1</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="2">2</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="3">3</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="4">4</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="5">5</button>
+          </td>
+        </tr>
+
+        <!-- row 2-->
+        <tr>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="6">1</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="7">2</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="8">3</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="9">4</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="10">5</button>
+          </td>
+        </tr>
+
+        <!-- row 3-->
+        <tr>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="11">1</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="12">2</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="13">3</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="14">4</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="15">5</button>
+          </td>
+        </tr>
+
+        <!-- row 4-->
+        <tr>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="16">1</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="17">2</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="18">3</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="19">4</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="20">5</button>
+          </td>
+        </tr>
+
+        <!-- row 5-->
+        <tr>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="21">1</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="22">2</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="23">3</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="24">4</button>
+          </td>
+          <td>
+            <button class="card" onClick="changeScoreCard(this.id)" id="25">5</button>
+          </td>
+        </tr>
+
+      </table>
+
+      <!-- game settings-->
+      <div class="" style="overflow:auto; vertical-align: middle;">
+        <div style="float: left;">
+          <form action="">
+            <input type="button" class="button-outline button" id="togglespymaster" value="Guesser" onclick="toggleSpyMaster()">
+            <!--           [Guessor/Spymaster]-->
+          </form>
+          
+          <div style="display: inline-block">
+            <form action="">
+              <input type="button" class="button-outline button" id="BombToggle" value="Hide Bomb" onclick="toggleBomb()">
+              <!--           [Guessor/Spymaster]-->
+            </form>
+          </div>
+        </div>
+
+        <div style="float: right;">
+          <form action="">
+            <input type="button" class="button-outline button" id="TimerButton" value="Timer" onclick="toggleTimer()">
+            <!--           [Guessor/Spymaster]-->
+          </form>
+        </div>
+        <div style="float: right; border:1px solid #f50057;" class="button-outline"><button style="color:#f50057" class="button" onclick="BuildGame()">Next Game</button>
+        </div>
+
+      </div>
+      <div>
+
+      </div>
+
+
+
+</body>
+
+</html>
+
+<!-- next todos:-->
+
+
+
+<!-- randomly insert words from .txt file (choose your pack?)-->
+<!-- make-->
+<!-- maybe for now, instead of figuring out how to make the webpage display different for each person (if i
+  toggle spymaster, does it toggle for everyone?) i can just have it send spymaster to a separate page?-->
+
+<!-- good news: i have the opposie problem LOL-->
+<!-- how to render the same page for everyone on it (if i click new game, everyone's card will change)-->
+<!-- but if i hit spymaster, only my page will change?-->
+
+<!-- the end turn button should simply display red turn, or blue turn//should i add logic for keeping track of team names? YES; modal: enter nickname. it should remember who you are; auto assign to teams, randomize teams, allow nickname change, and if you disconnect it removes you from the team-->
+
+<!-- 
+//upon entering page, a quick modal of a tutorial and reccomended settings is given!
+//timer on, 60 secs default, choose your name and your team (or itll be chosen automatically for you)
+allow a text box to enter in names and scramble teams
+light mode/dark mode
+-->
+
+<!-- stylings-->
+<!-- spymaster slider buttons, i would've liked to do this but i have to start doing school work now :( to see the stylings, see notes-->
+<!-- show bomb/hide bomb only effects spymaster-->
+<!-- timer button stylung-->
+
+
+<!-- side note, the game switches who starts-->
+
+
+
+<!-- if onpagelod() count=>1, then do not load a game on page refresh  (meaning server has started or game has already started)-->
+
