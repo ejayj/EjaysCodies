@@ -14,7 +14,10 @@ var avaialbleColors = []
 var currentTurn = "Red"; //to start, red normally goes first
 var ShowBomb = "on"; //its on to start
 var TimerSeconds = 61; //its 60 seconds to start
-var Timer="off";
+var Timer = "off";
+var wordcards = [];
+var wordPackChoice = 0; //the user will choose the word pack on front end, this code change re-runs the build game. (maybe make an alert saying this action will create a new game). default is 0
+var client = 0; //keeps track of how many people are connected so we know to build the game
 
 //GAME VARIABLES
 //how many cards we want of each
@@ -51,17 +54,17 @@ function toggleSpyMaster() { //turns on spymaster mode
 
 function toggleBombClient(Toggle) { //turns on/off bomb detection for spymaster
 
-    ShowBomb=Toggle;
-    
-    if (ShowBomb=="off") {
+    ShowBomb = Toggle;
+
+    if (ShowBomb == "off") {
         document.getElementById("BombToggle").value = "Show Bomb"; //the button will now show the bomb because it is currently hidden
 
         if (document.getElementById("togglespymaster").value == "Spymaster") {//if you are spymaster, refresh your display
             displayColors();
         }
 
-    } 
-    else if (ShowBomb=="on") //bomb will be shown
+    }
+    else if (ShowBomb == "on") //bomb will be shown
     {
         document.getElementById("BombToggle").value = "Hide Bomb"; //the button will now hide the bomb because it is active
 
@@ -126,6 +129,12 @@ function resetBoard() {
     }
 }
 
+function displayNewWords() {
+    for (let i = 0; i < 25; i++) { //for every card, display 
+        document.getElementById(i + 1).innerHTML = wordcards[i]
+    }
+}
+
 //resets all clients with spymaster toggled, so it would turn off
 function resetSpyMaster() { //turns on spymaster mode
     if (document.getElementById("togglespymaster").value == "Spymaster") {
@@ -158,20 +167,20 @@ function changeScoreCard(id) //eventally, i can go per player and say - if curre
     } else {
         socket.emit('changeScoreCard', { //this should automatically change the score card and revealed color server side
             id: id
-          });
+        });
     }
 
 }
 
 //when someone else clicks a card, this function registers it from server to client and shows the user
-function changeScoreCardClient(id,color){
-    if (color=="red"){
+function changeScoreCardClient(id, color) {
+    if (color == "red") {
         document.getElementById(id).style.background = revealedred;
-    } else if (color=="blue") {
+    } else if (color == "blue") {
         document.getElementById(id).style.background = revealedblue;
-    } else if (color=="null"){
+    } else if (color == "null") {
         document.getElementById(id).style.background = revealednull;
-    } else if (color=="black") {
+    } else if (color == "black") {
         document.getElementById(id).style.background = revealedblack;
     }
 }
@@ -189,12 +198,6 @@ function setWinner(team) {
     }
     displayColors(); //show remaining colors if any
 }
-
-
-
-//************ **************
-//functions not yet done:
-//************ **************
 
 function changeTurns(team) { //changes team to the passed value: team
     // window.alert("chaning teams. input: "+team);
@@ -218,20 +221,24 @@ function changeTurns(team) { //changes team to the passed value: team
 }
 
 function toggleTimerClient() { //turns on spymaster mode
-    if(Timer=="off"){
+    if (Timer == "off") {
         //turn timer off
         clearInterval(myTimer);
         //hide timer
         document.getElementById("Timer").style.display = "none";
         //change button value
         document.getElementById("TimerButton").value = "Timer";
-    } else if (Timer=="on") {
+        //hide timer slider
+        document.getElementById("timerSliderDisplay").style.display = "none"
+    } else if (Timer == "on") {
         //turn timer on: start
         clock();
         //show timer
         document.getElementById("Timer").style.display = "block";
         //change button value
         document.getElementById("TimerButton").value = "No Timer";
+        //show timer sldier
+        document.getElementById("timerSliderDisplay").style.display = "block"
     }
 }
 
@@ -243,10 +250,40 @@ function clock() { //clock instance separate but close to server's
         document.getElementById("Timer").innerHTML = "[" + --c + "]";
         if (c == 0) {
             clearInterval(myTimer);
-            endTurn();
+            //endTurn(); //end turn will comef rom server
             // alert("Reached zero");
         }
     }
+}
+
+function setTimerValueClient(value) { //turns on/off bomb detection for spymaster globally
+
+    //change slider values
+    document.getElementById("slidervalue").innerHTML = value //slider text value
+    document.getElementById("myRange").value = value //slider position value
+
+    //change timer value
+    TimerSeconds = value
+
+    //restart timer
+    clearInterval(myTimer);
+    clock();
+}
+
+//Modal functionalities:
+//Modal Stuff:
+
+function openModal(){
+    var modal = document.getElementById("myModal");
+    modal.style.display = "block";
+    document.getElementById("backgroundblur").style.display="block";
+}
+
+function closeModal(){
+    LoadGame(); //starts game
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+    document.getElementById("backgroundblur").style.display="none";
 }
 
 
@@ -258,28 +295,69 @@ function clock() { //clock instance separate but close to server's
 
 
 //triggers new game build for everyone
-function BuildGame() { 
+function BuildGame() {
     console.log('starting new game')
     socket.emit('BuildGame', {
         from: "client"
-      });
+    });
+}
+
+function LoadGame() {
+    // window.alert("loading game")
+    console.log("loading game")
+    requestVariables(); //get variables form server
+
+    resetBoard();
+    displayNewWords();
+    displayNewScore();
+    resetSpyMaster();
+    resetTurns();
+    console.log("game loaded")
+    //i may need to get variables from server
+}
+
+function OnLoadBuildGame() {
+
+    if (client > 90) {
+        //don't load new game
+    }
+    else if (client == 90) //if you're the first to join, build a game
+    {
+        console.log('starting new game')
+        socket.emit('BuildGame', {
+            from: "client"
+        });
+
+        location.reload();
+        //add refresh here?
+    }
 }
 
 //TOGGLE BOMB VIEW GLOBALLY
 function toggleBomb() { //turns on/off bomb detection for spymaster globally
     socket.emit('toggleBomb', {
         from: "client"
-      });
-      
+    });
+
 }
 
 //TOGGLE TIMER GLOBALLY
-function toggleTimer() { //turns on/off bomb detection for spymaster globally
+function toggleTimer() {
+
     console.log('request sent to toggle timer');
     socket.emit('toggleTimer', {
         from: "client"
-      });
-      
+    });
+
+}
+
+//SET NEW TIMER VALUE GLOBALLY
+function setTimerValue(value) {
+
+    console.log('New Timer Value: ' + value);
+    socket.emit('setTimerValue', {
+        value: value
+    });
 }
 
 
@@ -287,68 +365,83 @@ function toggleTimer() { //turns on/off bomb detection for spymaster globally
 function endTurn() {
     socket.emit('endTurn', {
         from: "client"
-      });
+    });
+}
+
+//REQUEST VARIABLES FROM SERVER [this is client specific only]
+function requestVariables() {
+    socket.emit('requestVariables', {
+        from: "client"
+    });
 }
 
 //END TURN FUNCTION FROM SERVER:
 socket.on('endTurn', function (currentTurn) {
     changeTurns(currentTurn.currentTurn);
-    console.log("Current Turn: "+currentTurn.currentTurn)
+    console.log("Current Turn: " + currentTurn.currentTurn)
 });
 
 //GET VARIABLES GAME FROM SERVER
 socket.on('sendVariables', function (data) {
-    redscore=data.redscore;
-    bluescore=data.bluescore;
-    cards=data.cards;
-    availablecards=data.availablecards;
-    avaialbleColors=data.avaialbleColors;
-    currentTurn=data.currentTurn;
-    ShowBomb=data.ShowBomb;
-    TimerSeconds=data.TimerSeconds;
-    bluecards=data.bluecards;
-    redcards=data.redcards;
-    blackcards=data.blackcards;
+    redscore = data.redscore;
+    bluescore = data.bluescore;
+    cards = data.cards;
+    availablecards = data.availablecards;
+    avaialbleColors = data.avaialbleColors;
+    currentTurn = data.currentTurn;
+    ShowBomb = data.ShowBomb;
+    TimerSeconds = data.TimerSeconds;
+    bluecards = data.bluecards;
+    redcards = data.redcards;
+    blackcards = data.blackcards;
+    wordcards = data.wordcards;
     //Timer=data.timer; //if timer is off/on? dont know if i need this or if i desperately do
 });
 
 //BUILD NEW GAME -> should only be called after we get new variables from server
-socket.on('BuildGame', function (from) {
+socket.on('BuildGame', function () {
     resetBoard();
+    displayNewWords();
     displayNewScore();
     resetSpyMaster();
     resetTurns();
+    console.log('building new game!')
 });
 
 //TOGGLE BOMB FROM SERVER
 socket.on('toggleBomb', function (ShowBomb) {
     toggleBombClient(ShowBomb.ShowBomb);
-    console.log("Toggle Bomb: "+ShowBomb.ShowBomb);
+    console.log("Toggle Bomb: " + ShowBomb.ShowBomb);
 });
 
 //TOGGLE TIMER FROM SERVER
 socket.on('toggleTimer', function (data) {
-    Timer=data.value;//passes timer on/off functionality
-    toggleTimerClient(); 
+    Timer = data.value;//passes timer on/off functionality
+    toggleTimerClient();
 });
 
+//NEW TIMER VALUE FROM SERVER
+socket.on('setTimerValue', function (data) {
+    TimerSeconds = data.value;
+    setTimerValueClient(TimerSeconds);
+});
 
 //CHANGE TURNS FROM SERVER
 socket.on('changeTurns', function (changeTurn) {
     changeTurns(changeTurn.changeTurn);
-    console.log("Changing Turns To: "+changeTurn.changeTurn);
+    console.log("Changing Turns To: " + changeTurn.changeTurn);
 });
 
 //CHANGE SCORE CARD FROM SERVER
 socket.on('changeScoreCard', function (data) {
-    changeScoreCardClient(data.id,data.color);
+    changeScoreCardClient(data.id, data.color);
 });
 
 //GET GAME CHANGED VARIABLES:
 socket.on('getGameState', function (data) {
-    redscore=data.redscore;
-    bluescore=data.bluescore;
-    cards=data.cards;
+    redscore = data.redscore;
+    bluescore = data.bluescore;
+    cards = data.cards;
     displayNewScore();
 });
 
@@ -362,9 +455,11 @@ socket.on('sendAlert', function (data) {
     window.alert(data.message);
 });
 
-
-
-
+//keeps track of clients connected from server
+socket.on('clientAddition', function () {
+    client++;
+    console.log("new client. count: " + client)
+});
 
 
 //********************************* */
@@ -372,3 +467,8 @@ socket.on('sendAlert', function (data) {
 //bomb mode changes these all to black cards and there's only one available card
 //upon entering page, a quick modal of a tutorial and reccomended settings is given!
 //on load, generate random colors and name titles
+
+window.addEventListener('load', 
+  function() { 
+    openModal();
+  }, false);

@@ -3,37 +3,113 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  
+
+  <!-- styles -->
   <link rel="stylesheet" href="styles.css">
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
-  <!-- <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script> -->
-
   
+  <!-- icon -->
+  <link rel="icon" type="image/x-icon" href="./detective.svg">
+
   <title>Ejay's Codies</title>
 </head>
-<script>
-//  var socket = io()
-//  socket.on('connect', function () {
-//    console.log('Connected to Server')
-//});
-</script>
 
-<body> <!-- start game as soon as you load the page; this should be turned off for online multiplayer play. How to start it as a one-time instance server?-->
+<body onload="">
+  <!-- The Modal -->
 
-  <div class="main">
+  <!-- background blur for modal -->
+  <div id="backgroundblur" class="overlay" style="display: none;"></div>
+  <!-- modal section-->
+  <section id="myModal" class="modal hidden" style="display:none;">
+    <div>
+
+      <!-- logo in modal -->
+      <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink" width="73px" height="73px" viewBox="0 0 420 420"
+        xml:space="preserve">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <g>
+            <g>
+              <g>
+                <path
+                  d="M94.643,139.958c4.078,67.059,41.929,106.477,83.768,106.477c41.839,0,79.726-39.412,83.812-106.459 c22.209-8.65,35.998-20.709,35.998-34.053c0-21.861-41.126-36.006-41.221-36.043c-4.461-54.201-19.567-68.564-35.498-68.564 c-17.941,0-36.936,18.199-42.971,18.199c-6.034,0-25.027-18.199-42.966-18.199c-15.935,0-31.035,14.354-35.502,68.564 C99.97,69.917,58.69,82.23,58.69,105.923C58.69,119.257,72.46,131.31,94.643,139.958z M122.474,20.735 c4.831-7.91,9.532-8.916,13.093-8.916c8.37,0,18.706,6.395,26.252,11.064c6.936,4.299,11.514,7.135,16.714,7.135 c5.204,0,9.786-2.836,16.717-7.135c7.549-4.672,17.882-11.066,26.253-11.064c3.558,0,8.261,1.006,13.087,8.92 c5.721,9.371,9.637,25.049,11.658,46.658c-2.091,2.311-5.997,5.568-13.146,8.969c-14.286,6.789-33.667,10.525-54.567,10.525 c-20.901,0-40.278-3.736-54.562-10.525c-7.155-3.4-11.06-6.658-13.147-8.969C112.845,45.784,116.761,30.104,122.474,20.735z M83.644,88.837c6.034,7.236,14.655,13.602,25.445,18.725c18.814,8.943,43.452,13.873,69.367,13.873s50.552-4.93,69.367-13.873 c10.79-5.123,19.412-11.488,25.444-18.725c9.184,5.58,14.456,11.707,14.456,17.086c0,7.789-10.904,16.961-28.461,23.941 c-21.416,8.521-50.112,13.207-80.808,13.207c-30.696,0-59.392-4.687-80.807-13.207c-17.557-6.98-28.461-16.152-28.461-23.941 C69.188,100.544,74.461,94.417,83.644,88.837z">
+                </path>
+                <path
+                  d="M261.631,337.765c4.098-5.189,9.486-9.123,15.579-11.449c-7.476-12.797-11.597-27.494-11.778-42.463 c-0.021-1.816,0.034-3.631,0.127-5.439l-22.256-8.873l-19.712-16.605c-5.204-4.396-12.894-4.074-17.72,0.728l-27.401,27.248 l-27.48-27.259c-4.83-4.791-12.508-5.103-17.708-0.717l-19.71,16.605l-84.166,33.562C2.306,313.893,2.326,409.874,0,418.684 h230.729c-3.402-4.859-5.57-10.51-6.287-16.566c-1.143-9.646,1.545-19.158,7.56-26.783L261.631,337.765z">
+                </path>
+                <path
+                  d="M351.16,368.681c-0.005,0-0.005,0-0.007,0c-8.423-0.002-16.864-1.267-24.922-3.701 c-0.843,6.467-3.41,12.629-7.503,17.814l-28.306,35.889h66.486c-1.062-4.006-1.638-26.113-4.521-50.021 C351.98,368.669,351.572,368.681,351.16,368.681z">
+                </path>
+                <path
+                  d="M393.264,227.687c-30.437-24.006-74.729-18.775-98.732,11.664c-20.682,26.217-19.657,62.725,0.481,87.678l-10.063,12.764 c-4.817,0.877-9.348,3.441-12.618,7.589l-29.633,37.571c-7.125,9.031-5.576,22.131,3.455,29.254 c9.032,7.123,22.131,5.576,29.257-3.455l29.631-37.571c3.271-4.146,4.71-9.146,4.44-14.039l10.062-12.76 c28.965,13.771,64.7,6.262,85.383-19.964C428.932,295.983,423.699,251.69,393.264,227.687z M388.567,313.519 c-16.893,21.418-48.061,25.1-69.477,8.207c-21.42-16.894-25.101-48.06-8.207-69.479c16.895-21.418,48.062-25.101,69.479-8.209 C401.78,260.933,405.461,292.101,388.567,313.519z">
+                </path>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <!-- end image in modal -->
+      <!-- odal text-->
+      <h2>Welcome To Ejay's Codies.xyz!</h2>
+      <p> This is my take on the previously closed site, codies.xyz!</p>
+
+      <p>You are a secret agent trying to decrypt a code from the spymaster before your enemy team does. Here's the catch: the spymasters can only give you a one word hint! The wrong word could trigger a bomb or a point for the other team... Can you accomplish this code before the enemy team does theirs?</p>
+
+      <h1> How To Play: </h1>
+      <ol style="color: rgb(234, 234, 234); text-align: left;">
+        <li>Get into equal teams, Red or Blue. Each team chooses 1 spymaster.</li>
+        <li>Spymasters hit the 'Spymaster' button to see their colors.</li>
+        <li>On your turn, your spymaster can only give a one-word hint.</li>
+        <li>Players will then choose which word is their answer.</li>
+        <li>First team who's score to reaches zero wins!</li>
+      </ol>
+  
+      <h1>RULES:</h1>
+      <ul>
+        <li>If you choose the other team's word, your team's turn ends.</li>
+        <li>If you accidentally choose the 'bomb' word, your team loses!</li>
+        <li>Only the spymaster gets to see the colors of the board</li>
+        <li>A team may pass their turn up by hitting the end turn button.</li>
+
+        <p><p style="font-weight: 700;">Other Options:</p>Timer: Activates a time limit of your choosing<br>Bomb: This hides or show's the bomb for spymasters.</p>
+      
+    </div>
+
+    <div style="vertical-align: middle; position: relative;">
+      <input type="text" id="playername" placeholder="Enter A Name!" />
+      <br>
+      <br>
+      <button class="btn" onclick="closeModal()">Get Started</button>
+      <br>
+      <p>Check <a href="https://github.com/ejayj" style="color: rgb(18, 109, 109); text-decoration: underline;text-decoration-style: dotted;">my github</a> for a tutorial on how to use/create this for your friends!
+      </p>
+      <div class="flex">
+      </div>
+    </div>
+  </section>
+
+<!-- END MODAL-->
+
+
+  <div class="main" style="position: absolute;">
     <!-- scoreboard -->
 
-    <div style="text-align: center; color: rgb(217,87,69); font-size: 2em;" id="GameHeader"><h1>Welcome!</h1></div>
+    <div style="text-align: center; color: rgb(217,87,69); font-size: 2em;" id="GameHeader">
+      <h1>Welcome!</h1>
+    </div>
     <div style="text-align: center; display: none; color: rgb(217,87,69); font-size: 25px;" id="Timer">60</div>
     <div class="" style="overflow:auto; font-size: 25px;">
       <div id="score" style="float: left;">
         <span id="redscore" style="color: rgb(217,87,69);">9</span>
-          <span style="color: white;"><span>-</span>
-        <span id="bluescore" style="color: rgb(61,122,210);">8</span>
+        <span style="color: white;"><span>-</span>
+          <span id="bluescore" style="color: rgb(61,122,210);">8</span>
       </div>
       <!-- this is a filler value, will be updated by javascript as game progresses-->
-      <div style="float: right;" class="button-outline "> <button class="button" onclick="endTurn()">End Turn</button></div>
+      <div style="float: right;" class="button-outline "> <button class="button" onclick="endTurn()">End Turn</button>
+      </div>
     </div>
 
 
@@ -155,71 +231,62 @@
 
       <!-- game settings-->
       <div class="" style="overflow:auto; vertical-align: middle;">
+
         <div style="float: left;">
           <form action="">
-            <input type="button" class="button-outline button" id="togglespymaster" value="Guesser" onclick="toggleSpyMaster()">
+            <input type="button" class="button-outline button" id="togglespymaster" value="Guesser"
+              onclick="toggleSpyMaster()">
             <!--           [Guessor/Spymaster]-->
           </form>
-          
+        </div>
+
+        <div style="float: right; border:1px solid #f50057;" class="button-outline"><button style="color:#f50057"
+            class="button" onclick="BuildGame()">Next Game</button>
+        </div>
+      </div>
+
+      <div style="float: right;" class="dropdown">
+        <form action="">
+          <input type="button" class="button-outline button" id="TimerButton" value="Timer" onclick="toggleTimer()">
+          <!--           [Guessor/Spymaster]-->
+        </form>
+      </div>
+
+      <div class="" style="overflow:auto; vertical-align: middle;">
+        <div>
           <div style="display: inline-block">
             <form action="">
-              <input type="button" class="button-outline button" id="BombToggle" value="Hide Bomb" onclick="toggleBomb()">
+              <input type="button" class="button-outline button" id="BombToggle" value="Hide Bomb"
+                onclick="toggleBomb()">
               <!--           [Guessor/Spymaster]-->
             </form>
           </div>
         </div>
-
-        <div style="float: right;">
-          <form action="">
-            <input type="button" class="button-outline button" id="TimerButton" value="Timer" onclick="toggleTimer()">
-            <!--           [Guessor/Spymaster]-->
-          </form>
-        </div>
-        <div style="float: right; border:1px solid #f50057;" class="button-outline"><button style="color:#f50057" class="button" onclick="BuildGame()">Next Game</button>
-        </div>
-
-      </div>
-      <div>
-
       </div>
 
+      <!-- Timer Value:-->
+      <div id="timerSliderDisplay" style="float: right; display: none;">
+        <form action="">
+          <input type="range" value="60" min="0" max="120" step="10" class="slider" id="myRange" list="sliderlist"
+            onmouseup="setTimerValue(this.value)">
+          <datalist id="sliderlist">
+            <option>0</option>
+            <option>20</option>
+            <option>40</option>
+            <option>60</option>
+            <option>80</option>
+            <option>100</option>
+            <option>120</option>
+          </datalist>
+          <p style="display: inline-block;"><span id="slidervalue" style="color: white">60</span> </p>
+        </form>
+      </div>
 
+    </div>
+
+
+  </div>
 
 </body>
 
 </html>
-
-<!-- next todos:-->
-
-
-
-<!-- randomly insert words from .txt file (choose your pack?)-->
-<!-- make-->
-<!-- maybe for now, instead of figuring out how to make the webpage display different for each person (if i
-  toggle spymaster, does it toggle for everyone?) i can just have it send spymaster to a separate page?-->
-
-<!-- good news: i have the opposie problem LOL-->
-<!-- how to render the same page for everyone on it (if i click new game, everyone's card will change)-->
-<!-- but if i hit spymaster, only my page will change?-->
-
-<!-- the end turn button should simply display red turn, or blue turn//should i add logic for keeping track of team names? YES; modal: enter nickname. it should remember who you are; auto assign to teams, randomize teams, allow nickname change, and if you disconnect it removes you from the team-->
-
-<!-- 
-//upon entering page, a quick modal of a tutorial and reccomended settings is given!
-//timer on, 60 secs default, choose your name and your team (or itll be chosen automatically for you)
-allow a text box to enter in names and scramble teams
-light mode/dark mode
--->
-
-<!-- stylings-->
-<!-- spymaster slider buttons, i would've liked to do this but i have to start doing school work now :( to see the stylings, see notes-->
-<!-- show bomb/hide bomb only effects spymaster-->
-<!-- timer button stylung-->
-
-
-<!-- side note, the game switches who starts-->
-
-
-
-<!-- if onpagelod() count=>1, then do not load a game on page refresh  (meaning server has started or game has already started)-->
-
